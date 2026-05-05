@@ -9,7 +9,7 @@ const app = express();
 
 app.use(cors({
   origin: [
-    "https://loremc.netlify.app",
+    "https://juicyprison.netlify.app",
     "http://localhost:3000"
   ],
   credentials: true

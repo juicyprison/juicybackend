@@ -12,9 +12,7 @@ let players = [];
 let chat = [];
 let logs = [];
 
-/* =========================
-   PLAYERS
-========================= */
+
 router.post("/players", (req, res) => {
   players = req.body;
   res.sendStatus(200);
@@ -24,9 +22,7 @@ router.get("/players", (req, res) => {
   res.json(players);
 });
 
-/* =========================
-   STAFF (Supabase)
-========================= */
+
 router.post("/players/staff", async (req, res) => {
   const incoming = req.body;
   const incomingUuids = incoming.map((p) => p.uuid);
@@ -60,9 +56,7 @@ router.get("/players/staff", async (req, res) => {
   res.json(data);
 });
 
-/* =========================
-   VAGT (Supabase)
-========================= */
+
 router.post("/players/vagt", async (req, res) => {
   const incoming = req.body;
   const incomingUuids = incoming.map((p) => p.uuid);
@@ -96,9 +90,7 @@ router.get("/players/vagt", async (req, res) => {
   res.json(data);
 });
 
-/* =========================
-   DONATOR (Supabase)
-========================= */
+
 router.post("/players/donator", async (req, res) => {
   const incoming = req.body;
   const incomingUuids = incoming.map((p) => p.uuid);
@@ -132,9 +124,7 @@ router.get("/players/donator", async (req, res) => {
   res.json(data);
 });
 
-/* =========================
-   PLAYER STATS
-========================= */
+
 router.post("/players/stats", async (req, res) => {
   const incoming = req.body;
   if (!Array.isArray(incoming)) return res.status(400).json({ message: "Expected array" });
@@ -176,9 +166,7 @@ router.get("/players/stats/:uuid", async (req, res) => {
   res.json(data);
 });
 
-/* =========================
-   CHAT
-========================= */
+
 router.post("/chat", (req, res) => {
   chat.push(req.body);
   res.sendStatus(200);
@@ -188,9 +176,7 @@ router.get("/chat", (req, res) => {
   res.json(chat);
 });
 
-/* =========================
-   LOGS
-========================= */
+
 router.post("/logs", (req, res) => {
   logs.push(req.body);
   res.sendStatus(200);
@@ -200,9 +186,7 @@ router.get("/logs", (req, res) => {
   res.json(logs);
 });
 
-/* =========================
-   COMMAND
-========================= */
+
 let lastCommand = null;
 
 router.post("/command", (req, res) => {
@@ -216,9 +200,7 @@ router.get("/command", (req, res) => {
   res.json({ cmd });
 });
 
-/* =========================
-   LINK SYSTEM
-========================= */
+
 const linkCodes = new Map();
 const linkTokens = new Map();
 
@@ -354,9 +336,7 @@ router.post("/link/auto", async (req, res) => {
   }
 });
 
-/* =========================
-   SERVER STATS
-========================= */
+
 router.get("/serverstats", async (req, res) => {
   const { data, error } = await supabase
     .from("server_stats")
@@ -399,9 +379,7 @@ router.post("/serverstats", async (req, res) => {
 });
 
 
-/* =========================
-   LOGIN STREAK
-========================= */
+
 router.post("/players/streak", async (req, res) => {
   const incoming = req.body;
   if (!Array.isArray(incoming)) return res.status(400).json({ message: "Expected array" });
@@ -422,16 +400,13 @@ router.post("/players/streak", async (req, res) => {
     const onlineByDate = existing?.online_by_date ?? {};
     const totalClaims = existing?.total_claims ?? 0;
 
-    // Tilføj dagens dato til claimed_dates hvis ikke allerede der
     const newClaimed = claimedDates.includes(iso)
       ? claimedDates
-      : [...claimedDates, iso].slice(-180); // behold kun 180 dage
+      : [...claimedDates, iso].slice(-180); 
 
-    // Opdater online tid for i dag
     const prevMs = onlineByDate[iso] ?? 0;
     onlineByDate[iso] = prevMs + (p.sessionOnlineMs ?? 0);
 
-    // Ryd gamle datoer (ældre end 180 dage)
     const cutoff = new Date();
     cutoff.setDate(cutoff.getDate() - 180);
     for (const key of Object.keys(onlineByDate)) {
