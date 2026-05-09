@@ -9,7 +9,7 @@ const app = express();
 
 app.use(cors({
   origin: [
-    "https://juicyprison.netlify.app",
+    "https://juicymc.dk",
     "http://localhost:3000"
   ],
   credentials: true
@@ -44,7 +44,7 @@ app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 
   setInterval(() => {
-    fetch("https://backend-ir2e.onrender.com/api/minecraft/players")
+    fetch("https://juicybackend.onrender.com/api/minecraft/players")
       .catch(() => {});
   }, 10 * 60 * 1000);
 });
