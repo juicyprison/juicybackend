@@ -44,7 +44,7 @@ app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 
   setInterval(() => {
-    fetch("https://juicybackend.onrender.com/api/minecraft/players")
+    fetch("https://juicybackend-f76r.onrender.com/api/minecraft/players")
       .catch(() => {});
   }, 10 * 60 * 1000);
 });
