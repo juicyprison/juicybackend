@@ -2,7 +2,7 @@ require("dotenv/config");
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
-require("./Discordbot");a
+require("./Discordbot");
 
 const PORT = process.env.PORT || 8080;
 
