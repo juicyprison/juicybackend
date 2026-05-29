@@ -236,7 +236,6 @@ router.post("/generate-code", (req, res) => {
   const code = generateCode();
   const token = crypto.randomBytes(32).toString("hex");
 
-  // Gem ingameRang med i koden så vi kan bruge den ved link
   linkCodes.set(code, { minecraftUuid, minecraftName, ingameRang: ingameRang ?? null, expiresAt: Date.now() + CODE_EXPIRY_MS, token });
   linkTokens.set(token, { minecraftUuid, minecraftName, ingameRang: ingameRang ?? null, expiresAt: Date.now() + TOKEN_EXPIRY_MS });
 
@@ -283,7 +282,6 @@ router.post("/link", async (req, res) => {
     linkCodes.delete(code.toUpperCase());
     console.log(`[Link] Discord ${discordId} <-> Minecraft ${entry.minecraftName}`);
 
-    // Giv Discord roller automatisk
     givRoller(discordId, entry.ingameRang).then(result => {
       if (!result.success) console.warn(`[Link] Kunne ikke give roller til ${discordId}: ${result.reason}`);
     });
@@ -338,7 +336,6 @@ router.post("/link/auto", async (req, res) => {
 
     console.log(`[Auto-link] Discord ${discordId} <-> Minecraft ${entry.minecraftName}`);
 
-    // Giv Discord roller automatisk
     givRoller(discordId, entry.ingameRang).then(result => {
       if (!result.success) console.warn(`[Auto-link] Kunne ikke give roller til ${discordId}: ${result.reason}`);
     });
@@ -350,11 +347,9 @@ router.post("/link/auto", async (req, res) => {
   }
 });
 
-// Endpoint kaldt af /opdater ingame kommando
 router.post("/opdater/:minecraftUuid", async (req, res) => {
   const { minecraftUuid } = req.params;
 
-  // Find discord ID fra linked_accounts
   const { data: account } = await supabase
     .from("linked_accounts")
     .select("discord_id")
@@ -367,6 +362,46 @@ router.post("/opdater/:minecraftUuid", async (req, res) => {
 
   const result = await synkroniserRoller(account.discord_id);
   res.json(result);
+});
+
+
+router.get("/linked", async (req, res) => {
+  const uuids = req.query.uuids?.split(",") ?? [];
+  if (uuids.length === 0) return res.json([]);
+
+  const { data, error } = await supabase
+    .from("linked_accounts")
+    .select("minecraft_uuid")
+    .in("minecraft_uuid", uuids);
+
+  if (error) return res.status(500).json({ error });
+  res.json(data);
+});
+
+router.get("/linked/account/:uuid", async (req, res) => {
+  const { uuid } = req.params;
+
+  const { data, error } = await supabase
+    .from("linked_accounts")
+    .select("*")
+    .eq("minecraft_uuid", uuid)
+    .single();
+
+  if (error || !data) return res.status(404).json({ error: "Ikke fundet" });
+  res.json(data);
+});
+
+router.get("/linked/discord/:discord_id", async (req, res) => {
+  const { discord_id } = req.params;
+
+  const { data, error } = await supabase
+    .from("linked_accounts")
+    .select("*")
+    .eq("discord_id", discord_id)
+    .order("linked_at", { ascending: false });
+
+  if (error) return res.status(500).json({ error });
+  res.json(data ?? []);
 });
 
 
