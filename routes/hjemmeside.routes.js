@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const crypto = require("crypto");
 const { createClient } = require("@supabase/supabase-js");
-const { givRoller, synkroniserRoller } = require("../discordBot");
+const { givRoller, synkroniserRoller } = require("../Discordbot");
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
